@@ -3,6 +3,7 @@ export type ISignupRequest = {
   email: string;
   password: string;
 };
+
 export type IShopKeeperRequest = {
   shopName: string;
   shopAddress: string;
@@ -15,6 +16,7 @@ export type ILoginUser = {
   email: string;
   password: string;
 };
+
 export type ILoginResponse = {
   token: string;
 };
