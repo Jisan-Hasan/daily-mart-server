@@ -13,6 +13,7 @@ const signup = catchAsync(async (req: Request, res: Response) => {
     message: 'Signup successful',
   });
 });
+
 const createShopKeeper = catchAsync(async (req, res) => {
   await AuthService.createShopKeeper(req.body);
 
@@ -25,6 +26,7 @@ const createShopKeeper = catchAsync(async (req, res) => {
 
 const login = catchAsync(async (req, res) => {
   const result = await AuthService.login(req.body);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -32,13 +34,14 @@ const login = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const changePassword = catchAsync(async (req, res) => {
-  const result = await AuthService.changePassword(req.user?.email, req.body);
+  await AuthService.changePassword(req.user?.email, req.body);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Your password has been changed Successfully',
-    data: result,
   });
 });
 

@@ -12,7 +12,8 @@ const signup = z.object({
     })
     .strict(),
 });
-const shopKeeperData = z.object({
+
+const createShopKeeper = z.object({
   body: z
     .object({
       name: z.string({ required_error: 'Name is required' }).min(3).max(20),
@@ -59,7 +60,7 @@ const changePassword = z.object({
 
 export const AuthValidation = {
   signup,
-  shopKeeperData,
+  createShopKeeper,
   login,
   changePassword,
 };

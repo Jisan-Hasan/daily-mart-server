@@ -1,6 +1,9 @@
 import { User_Role } from '@prisma/client';
 import httpStatus from 'http-status';
+import { Secret } from 'jsonwebtoken';
+import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { comparePassword, hashPassword } from '../../../shared/bcrypt';
 import prisma from '../../../shared/prisma';
 import {
@@ -10,9 +13,6 @@ import {
   IShopKeeperRequest,
   ISignupRequest,
 } from './auth.interface';
-import { jwtHelpers } from '../../../helpers/jwtHelpers';
-import config from '../../../config';
-import { Secret } from 'jsonwebtoken';
 
 const signup = async (payload: ISignupRequest): Promise<void> => {
   const { email, password, ...otherData } = payload;
@@ -118,8 +118,9 @@ const createShopKeeper = async (payload: IShopKeeperRequest): Promise<void> => {
   });
 };
 
-const login = async (payload: ILoginUser): Promise<ILoginResponse | null> => {
+const login = async (payload: ILoginUser): Promise<ILoginResponse> => {
   const { email, password } = payload;
+
   // check if user already exists with the email
   const isUserExist = await prisma.user.findUnique({
     where: {
@@ -129,6 +130,7 @@ const login = async (payload: ILoginUser): Promise<ILoginResponse | null> => {
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User is not exist');
   }
+
   // check if password is correct or not
   if (
     isUserExist.password &&
@@ -136,12 +138,15 @@ const login = async (payload: ILoginUser): Promise<ILoginResponse | null> => {
   ) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password in incorrect');
   }
+
+  // create jwt token
   const jwtPayload = { email: isUserExist?.email, role: isUserExist?.role };
   const token = jwtHelpers.createToken(
     jwtPayload,
     config.jwt.secret as Secret,
     config.jwt.expires_in as string,
   );
+
   //TODO:IMPLEMENT REFRESH TOKEN
   // const refreshToken = JwtHelpers.createToken(
   //   jwtPayload,
@@ -154,8 +159,12 @@ const login = async (payload: ILoginUser): Promise<ILoginResponse | null> => {
   };
 };
 
-const changePassword = async (authEmail: string, payload: IChangePassword) => {
+const changePassword = async (
+  authEmail: string,
+  payload: IChangePassword,
+): Promise<void> => {
   const { oldPassword, newPassword } = payload;
+
   // check if user already exists with the email
   const isUserExist = await prisma.user.findUnique({
     where: {
@@ -165,6 +174,7 @@ const changePassword = async (authEmail: string, payload: IChangePassword) => {
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User is not exist');
   }
+
   // check if oldPassword is correct or not
   if (
     isUserExist.password &&
@@ -173,6 +183,7 @@ const changePassword = async (authEmail: string, payload: IChangePassword) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Your password is not match');
   }
 
+  //   update password
   await prisma.user.update({
     where: {
       email: authEmail,
@@ -182,6 +193,7 @@ const changePassword = async (authEmail: string, payload: IChangePassword) => {
     },
   });
 };
+
 export const AuthService = {
   signup,
   createShopKeeper,
