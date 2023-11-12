@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\jisan\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add -D @types/jsonwebtoken
+  C:\Program Files\nodejs\node.exe C:\Users\jisan\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add -D @types/bcrypt
 
 PATH: 
   C:\Users\jisan\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\jisan\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Redis;C:\Program Files\Cloudflare\Cloudflare WARP;C:\xampp\php;C:\Program Files\Docker\Docker\resources\bin;C:\Users\jisan\.console-ninja\.bin;C:\Users\jisan\AppData\Local\Microsoft\WindowsApps;C:\Users\jisan\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\jisan\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
@@ -53,6 +53,7 @@ npm manifest:
     "devDependencies": {
       "@types/cookie-parser": "^1.4.6",
       "@types/cors": "^2.8.16",
+      "@types/jsonwebtoken": "^9.0.5",
       "@typescript-eslint/eslint-plugin": "^6.10.0",
       "@typescript-eslint/parser": "^6.10.0",
       "eslint": "^8.53.0",
@@ -285,6 +286,13 @@ Lockfile:
     version "7.0.15"
     resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
     integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
+  
+  "@types/jsonwebtoken@^9.0.5":
+    version "9.0.5"
+    resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-9.0.5.tgz#0bd9b841c9e6c5a937c17656e2368f65da025588"
+    integrity sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA==
+    dependencies:
+      "@types/node" "*"
   
   "@types/mime@*":
     version "3.0.4"

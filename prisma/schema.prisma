@@ -18,32 +18,32 @@ enum Role {
 
 // User model
 model User {
-  id           String     @id @default(uuid()) @map("user_id")
-  email        String     @unique
+  id           String      @id @default(uuid())
+  email        String      @unique
   password     String
-  role         User_Role  @default(customer)
-  customerId   String     @unique @map("customer_id")
-  customer     Customer   @relation(fields: [customerId], references: [id])
-  shopKeeperId String     @unique @map("store_keeper_id")
-  shopKeeper   ShopKeeper @relation(fields: [shopKeeperId], references: [id])
-  adminId      String     @unique @map("admin_id")
-  admin        Admin      @relation(fields: [adminId], references: [id])
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  role         User_Role   @default(customer)
+  customerId   String?     @unique
+  customer     Customer?   @relation(fields: [customerId], references: [id])
+  shopKeeperId String?     @unique
+  shopKeeper   ShopKeeper? @relation(fields: [shopKeeperId], references: [id])
+  adminId      String?     @unique
+  admin        Admin?      @relation(fields: [adminId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@map(name: "users")
 }
 
 // Customer model
 model Customer {
-  id                  String   @id @default(uuid()) @map(name: "customer_id")
+  id                  String   @id @default(uuid())
   name                String
   email               String   @unique
-  contactNo           String   @map("contact_no")
-  secendaryContractNo String   @map("secondary_contact_no")
-  address             String
-  gender              String
-  profileImage        String?  @map("profile_image")
+  contactNo           String?
+  secendaryContractNo String?
+  address             String?
+  gender              String?
+  profileImage        String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   user                User?
@@ -53,18 +53,18 @@ model Customer {
 
 // ShopKeeper model
 model ShopKeeper {
-  id                  String   @id @default(uuid()) @map("store_keeper")
+  id                  String   @id @default(uuid())
   name                String
   email               String   @unique
-  shopName            String   @map("shop_name")
-  shopAddress         String   @map("shop_address")
-  contactNo           String   @map("contact_no")
-  secendaryContractNo String?  @map("secondary_contact_no")
+  shopName            String
+  shopAddress         String
+  contactNo           String
+  secendaryContractNo String?
   address             String
   gender              String
-  profileImage        String?  @map("profile_image")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  profileImage        String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
   user                User?
 
   @@map("store_keepers")
@@ -72,84 +72,84 @@ model ShopKeeper {
 
 // Admin model
 model Admin {
-  id           String   @id @default(uuid()) @map("admin_id")
+  id           String   @id @default(uuid())
   name         String
   email        String   @unique
-  contactNo    String   @map("contact_no")
+  contactNo    String
   address      String
-  profileImage String?  @map("profile_image")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  profileImage String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User?
 
-  @@map(name: "admins")
+  @@map("admins")
 }
 
 // Category model
 model Category {
-  id          String   @id @default(uuid()) @map("category_id")
+  id          String   @id @default(uuid())
   title       String
   description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("categories")
 }
 
 // Brand model
 model Brand {
-  id          String   @id @default(uuid()) @map(name: "brand_id")
+  id          String   @id @default(uuid())
   name        String
   description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("brands")
 }
 
 // Product model
 model Product {
-  id          String   @id @default(uuid()) @map(name: "product_id")
+  id          String   @id @default(uuid())
   name        String
   description String
   price       Float
   quantity    Int      @default(0)
   image       String
   expireDate  DateTime
-  brandId     String   @map("brand_id")
-  categoryId  String   @map("category_id")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  brandId     String
+  categoryId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("products")
 }
 
 // Cart model
 model Cart {
-  id            String   @id @default(uuid()) @map("cart_id")
-  customerEmail String   @map("customer_email")
-  productId     String   @map("product_id")
+  id            String   @id @default(uuid())
+  customerEmail String
+  productId     String
   quantity      Int      @default(0)
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("carts")
 }
 
 // Order model
 model Order {
-  id            String   @id @default(uuid()) @map("order_id")
-  customerEmail String   @map("customer_email")
+  id            String   @id @default(uuid())
+  customerEmail String
   products      Json[]
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("orders")
 }
 
 // DeliveryDetails model
 model DeliveryDetails {
-  id         String   @id @default(uuid()) @map(name: "delivery_details_id")
+  id         String   @id @default(uuid())
   firstName  String
   lastName   String
   city       String
@@ -157,44 +157,44 @@ model DeliveryDetails {
   zip        Int
   phone      String
   email      String
-  orderId    String   @map("order_id")
-  customerId String   @map("customer_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  orderId    String
+  customerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("delivery_details")
 }
 
 // Feedback model
 model Feedback {
-  id            String   @id @default(uuid()) @map("feedback_id")
-  customerEmail String   @map("customer_email")
+  id            String   @id @default(uuid())
+  customerEmail String
   rating        Int      @default(0)
   comment       String
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("feedbacks")
 }
 
 // Payment model
 model Payment {
-  id            String   @id @default(uuid()) @map("payment_id")
-  orderId       String   @map("order_id")
-  transactionId String   @map("transaction_id")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  orderId       String
+  transactionId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("payments")
 }
 
 // Wishlist model
 model Wishlist {
-  id            Int      @id @default(autoincrement()) @map(name: "wishlist")
-  customerEmail String   @map("customer_email")
-  productId     String   @map("product_id")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id            Int      @id @default(autoincrement())
+  customerEmail String
+  productId     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("wishlists")
 }
