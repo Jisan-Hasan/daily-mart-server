@@ -1,3 +1,5 @@
+import { Gender } from '@prisma/client';
+
 export type ISignupRequest = {
   name: string;
   email: string;
@@ -8,8 +10,7 @@ export type IShopKeeperRequest = {
   shopName: string;
   shopAddress: string;
   contactNo: string;
-  address: string;
-  gender: string;
+  gender: Gender;
 } & ISignupRequest;
 
 export type ILoginUser = {
