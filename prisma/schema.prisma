@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  customer
+  store_keeper
+}
+
+// User model
+model User {
+  id           String     @id @default(uuid()) @map("user_id")
+  email        String     @unique
+  password     String
+  role         User_Role  @default(customer)
+  customerId   String     @unique @map("customer_id")
+  customer     Customer   @relation(fields: [customerId], references: [id])
+  shopKeeperId String     @unique @map("store_keeper_id")
+  shopKeeper   ShopKeeper @relation(fields: [shopKeeperId], references: [id])
+  adminId      String     @unique @map("admin_id")
+  admin        Admin      @relation(fields: [adminId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map(name: "users")
+}
+
+// Customer model
+model Customer {
+  id                  String   @id @default(uuid()) @map(name: "customer_id")
+  name                String
+  email               String   @unique
+  contactNo           String   @map("contact_no")
+  secendaryContractNo String   @map("secondary_contact_no")
+  address             String
+  gender              String
+  profileImage        String?  @map("profile_image")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User?
+
+  @@map("customers")
+}
+
+// ShopKeeper model
+model ShopKeeper {
+  id                  String   @id @default(uuid()) @map("store_keeper")
+  name                String
+  email               String   @unique
+  shopName            String   @map("shop_name")
+  shopAddress         String   @map("shop_address")
+  contactNo           String   @map("contact_no")
+  secendaryContractNo String?  @map("secondary_contact_no")
+  address             String
+  gender              String
+  profileImage        String?  @map("profile_image")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  user                User?
+
+  @@map("store_keepers")
+}
+
+// Admin model
+model Admin {
+  id           String   @id @default(uuid()) @map("admin_id")
+  name         String
+  email        String   @unique
+  contactNo    String   @map("contact_no")
+  address      String
+  profileImage String?  @map("profile_image")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  user         User?
+
+  @@map(name: "admins")
+}
+
+// Category model
+model Category {
+  id          String   @id @default(uuid()) @map("category_id")
+  title       String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
+// Brand model
+model Brand {
+  id          String   @id @default(uuid()) @map(name: "brand_id")
+  name        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("brands")
+}
+
+// Product model
+model Product {
+  id          String   @id @default(uuid()) @map(name: "product_id")
+  name        String
+  description String
+  price       Float
+  quantity    Int      @default(0)
+  image       String
+  expireDate  DateTime
+  brandId     String   @map("brand_id")
+  categoryId  String   @map("category_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+// Cart model
+model Cart {
+  id            String   @id @default(uuid()) @map("cart_id")
+  customerEmail String   @map("customer_email")
+  productId     String   @map("product_id")
+  quantity      Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("carts")
+}
+
+// Order model
+model Order {
+  id            String   @id @default(uuid()) @map("order_id")
+  customerEmail String   @map("customer_email")
+  products      Json[]
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("orders")
+}
+
+// DeliveryDetails model
+model DeliveryDetails {
+  id         String   @id @default(uuid()) @map(name: "delivery_details_id")
+  firstName  String
+  lastName   String
+  city       String
+  street     String
+  zip        Int
+  phone      String
+  email      String
+  orderId    String   @map("order_id")
+  customerId String   @map("customer_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("delivery_details")
+}
+
+// Feedback model
+model Feedback {
+  id            String   @id @default(uuid()) @map("feedback_id")
+  customerEmail String   @map("customer_email")
+  rating        Int      @default(0)
+  comment       String
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("feedbacks")
+}
+
+// Payment model
+model Payment {
+  id            String   @id @default(uuid()) @map("payment_id")
+  orderId       String   @map("order_id")
+  transactionId String   @map("transaction_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("payments")
+}
+
+// Wishlist model
+model Wishlist {
+  id            Int      @id @default(autoincrement()) @map(name: "wishlist")
+  customerEmail String   @map("customer_email")
+  productId     String   @map("product_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("wishlists")
+}
+
+enum User_Role {
+  customer
+  store_keeper
+  admin
+}
