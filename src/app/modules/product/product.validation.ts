@@ -8,13 +8,8 @@ const create = z.object({
         required_error: 'Product Description must be required',
       }),
       price: z.number({ required_error: 'Product price must be required' }),
-      quantity: z
-        .number({ required_error: 'Product quantity must be required' })
-        .int(),
+      quantity: z.number().int().default(0).optional(),
       image: z.string({ required_error: 'Product image must be required' }),
-      expireDate: z.date({
-        required_error: 'Product Expire date must be required',
-      }),
       brandId: z.string({ required_error: 'Brand ID must be required' }),
       categoryId: z.string({ required_error: 'Category ID must be required' }),
     })
@@ -29,7 +24,6 @@ const update = z.object({
       price: z.number().optional(),
       quantity: z.number().int().optional(),
       image: z.string().optional(),
-      expireDate: z.date().optional(),
       brandId: z.string().optional(),
       categoryId: z.string().optional(),
     })
