@@ -108,7 +108,7 @@ model Category {
 // Brand model
 model Brand {
   id          String  @id @default(uuid())
-  name        String @unique
+  name        String  @unique
   image       String
   description String?
 
@@ -122,13 +122,12 @@ model Brand {
 
 // Product model
 model Product {
-  id          String   @id @default(uuid())
-  name        String
+  id          String @id @default(uuid())
+  name        String @unique
   description String
   price       Float
-  quantity    Int      @default(0)
+  quantity    Int    @default(0)
   image       String
-  expireDate  DateTime
 
   brandId String
   brand   Brand  @relation(fields: [brandId], references: [id])
