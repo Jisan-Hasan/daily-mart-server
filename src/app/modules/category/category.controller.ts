@@ -1,29 +1,35 @@
+import { Category } from '.prisma/client';
 import httpStatus from 'http-status';
-import catchAsync from '../../../shared/catchAsync';
-import sendResponse from '../../../shared/sendResponse';
-import { CategoryService } from './category.service';
-import pick from '../../../shared/pick';
-import { categoryFilterFields } from './category.constant';
 import { paginationOptionFields } from '../../../common/paginationOptions';
+import catchAsync from '../../../shared/catchAsync';
+import pick from '../../../shared/pick';
+import sendResponse from '../../../shared/sendResponse';
+import { categoryFilterFields } from './category.constant';
+import { CategoryService } from './category.service';
 
 const create = catchAsync(async (req, res) => {
   const result = await CategoryService.create(req.body);
-  sendResponse(res, {
+
+  sendResponse<Category>(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Successfully created category',
+    message: 'Category created Successfully',
     data: result,
   });
 });
 
 const getAll = catchAsync(async (req, res) => {
+  // pick only filter fields from query params
   const filters = pick(req.query, categoryFilterFields);
+  // pick only pagination fields from query params
   const paginationOptions = pick(req.query, paginationOptionFields);
+
   const result = await CategoryService.getAll(filters, paginationOptions);
-  sendResponse(res, {
-    statusCode: httpStatus.FOUND,
+
+  sendResponse<Category[]>(res, {
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully Get all categories',
+    message: 'Successfully Fetched all categories',
     data: result.data,
     meta: result.meta,
   });
@@ -31,19 +37,19 @@ const getAll = catchAsync(async (req, res) => {
 
 const getSingle = catchAsync(async (req, res) => {
   const result = await CategoryService.getSingle(req.params.id);
+
   sendResponse(res, {
     statusCode: httpStatus.FOUND,
     success: true,
-    message: `${
-      result ? 'Successfully Get single Category info' : 'No data found'
-    } `,
+    message: 'Successfully Retrieve Category Information',
     data: result,
   });
 });
 
 const deleteOne = catchAsync(async (req, res) => {
   const result = await CategoryService.deleteOne(req.params.id);
-  sendResponse(res, {
+
+  sendResponse<Category>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Successfully Delete a Category ',
@@ -53,7 +59,8 @@ const deleteOne = catchAsync(async (req, res) => {
 
 const updateOne = catchAsync(async (req, res) => {
   const result = await CategoryService.updateOne(req.params.id, req.body);
-  sendResponse(res, {
+
+  sendResponse<Category>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Successfully Update Category data',
