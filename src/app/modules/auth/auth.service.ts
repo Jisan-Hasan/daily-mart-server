@@ -104,7 +104,7 @@ const createShopKeeper = async (payload: IShopKeeperRequest): Promise<void> => {
     const newUserData = {
       email,
       password: encryptedPassword,
-      role: User_Role.customer,
+      role: User_Role.shop_keeper,
       shopKeeperId: newShopKeeper.id,
     };
     const newUser = await transactionClient.user.create({

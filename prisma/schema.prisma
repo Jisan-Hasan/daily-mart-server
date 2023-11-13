@@ -10,197 +10,217 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  admin
-  customer
-  store_keeper
-}
-
 // User model
 model User {
-  id           String      @id @default(uuid())
-  email        String      @unique
-  password     String
-  role         User_Role   @default(customer)
-  customerId   String?     @unique
-  customer     Customer?   @relation(fields: [customerId], references: [id])
+  id       String    @id @default(uuid())
+  email    String    @unique
+  password String
+  role     User_Role @default(customer)
+
+  customerId String?   @unique
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
   shopKeeperId String?     @unique
   shopKeeper   ShopKeeper? @relation(fields: [shopKeeperId], references: [id])
-  adminId      String?     @unique
-  admin        Admin?      @relation(fields: [adminId], references: [id])
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+
+  adminId String? @unique
+  admin   Admin?  @relation(fields: [adminId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map(name: "users")
 }
 
 // Customer model
 model Customer {
-  id                  String   @id @default(uuid())
+  id                  String  @id @default(uuid())
   name                String
-  email               String   @unique
+  email               String  @unique
   contactNo           String?
   secendaryContractNo String?
   address             String?
-  gender              String?
+  gender              Gender?
   profileImage        String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  user                User?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user            User?
+  deliveryDetails DeliveryDetails[]
+  feedbacks       Feedback[]
 
   @@map("customers")
 }
 
 // ShopKeeper model
 model ShopKeeper {
-  id                  String   @id @default(uuid())
+  id                  String  @id @default(uuid())
   name                String
-  email               String   @unique
+  email               String  @unique
   shopName            String
   shopAddress         String
   contactNo           String
   secendaryContractNo String?
-  address             String
-  gender              String
+  gender              Gender?
   profileImage        String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  user                User?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User?
 
   @@map("store_keepers")
 }
 
 // Admin model
 model Admin {
-  id           String   @id @default(uuid())
+  id           String  @id @default(uuid())
   name         String
-  email        String   @unique
-  contactNo    String
-  address      String
+  email        String  @unique
+  contactNo    String?
+  address      String?
   profileImage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User?
 
   @@map("admins")
 }
 
 // Category model
 model Category {
-  id          String   @id @default(uuid())
-  title       String
+  id          String  @id @default(uuid())
+  title       String  @unique
+  image       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
 
   @@map("categories")
 }
 
 // Brand model
 model Brand {
-  id          String   @id @default(uuid())
-  name        String
+  id          String  @id @default(uuid())
+  name        String  @unique
+  image       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
 
   @@map("brands")
 }
 
 // Product model
 model Product {
-  id          String   @id @default(uuid())
-  name        String
+  id          String @id @default(uuid())
+  name        String @unique
   description String
   price       Float
-  quantity    Int      @default(0)
+  quantity    Int    @default(0)
   image       String
-  expireDate  DateTime
-  brandId     String
-  categoryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  feedbacks Feedback[]
 
   @@map("products")
 }
 
-// Cart model
-model Cart {
-  id            String   @id @default(uuid())
-  customerEmail String
-  productId     String
-  quantity      Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("carts")
-}
-
 // Order model
 model Order {
-  id            String   @id @default(uuid())
+  id            String @id @default(uuid())
   customerEmail String
   products      Json[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deliveryDetails DeliveryDetails[]
+  payments        Payment[]
 
   @@map("orders")
 }
 
 // DeliveryDetails model
 model DeliveryDetails {
-  id         String   @id @default(uuid())
-  firstName  String
-  lastName   String
-  city       String
-  street     String
-  zip        Int
-  phone      String
-  email      String
-  orderId    String
+  id     String @id @default(uuid())
+  name   String
+  city   String
+  street String
+  zip    Int
+  phone  String
+  email  String
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
   customerId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("delivery_details")
 }
 
 // Feedback model
 model Feedback {
-  id            String   @id @default(uuid())
+  id            String @id @default(uuid())
   customerEmail String
-  rating        Int      @default(0)
+  rating        Int    @default(0)
   comment       String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("feedbacks")
 }
 
 // Payment model
 model Payment {
-  id            String   @id @default(uuid())
-  orderId       String
+  id            String @id @default(uuid())
   transactionId String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("payments")
 }
 
-// Wishlist model
-model Wishlist {
-  id            Int      @id @default(autoincrement())
-  customerEmail String
-  productId     String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("wishlists")
-}
-
 enum User_Role {
   customer
-  store_keeper
+  shop_keeper
   admin
+}
+
+enum Gender {
+  male
+  female
+  other
 }

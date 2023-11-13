@@ -20,7 +20,7 @@ router.post('/signin', validate(AuthValidation.login), AuthController.login);
 router.post(
   '/change-password',
   validate(AuthValidation.changePassword),
-  auth(User_Role.admin, User_Role.customer, User_Role.store_keeper),
+  auth(User_Role.admin, User_Role.customer, User_Role.shop_keeper),
   AuthController.changePassword,
 );
 
