@@ -59,6 +59,7 @@ const deleteOne = catchAsync(async (req, res) => {
 
 const updateOne = catchAsync(async (req, res) => {
   const result = await BrandService.updateOne(req.params.id, req.body);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

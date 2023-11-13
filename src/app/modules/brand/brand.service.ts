@@ -123,24 +123,24 @@ const getSingle = async (id: string): Promise<Brand> => {
 };
 
 const deleteOne = async (id: string): Promise<Brand> => {
-  // delete all product with this brand
-  await prisma.product.deleteMany({
-    where: {
-      brandId: id,
-    },
-  });
+  // initiate transaction to delete brand and all products with this brand
+  return await prisma.$transaction(async transactionClient => {
+    // delete all product with this brand
+    await transactionClient.product.deleteMany({
+      where: {
+        brandId: id,
+      },
+    });
 
-  // delete brand
-  const result = await prisma.brand.delete({
-    where: {
-      id,
-    },
-    include: {
-      products: true,
-    },
-  });
+    // delete brand
+    const result = await transactionClient.brand.delete({
+      where: {
+        id,
+      },
+    });
 
-  return result;
+    return result;
+  });
 };
 
 const updateOne = async (
@@ -153,6 +153,7 @@ const updateOne = async (
     },
     data,
   });
+
   return result;
 };
 
