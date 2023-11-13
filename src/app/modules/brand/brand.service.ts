@@ -1,16 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Brand } from '@prisma/client';
-import prisma from '../../../shared/prisma';
-import { IBrandFilter } from './brand.interface';
-import { IPaginationOptions } from '../../../interfaces/pagination';
-import { IGenericResponse } from '../../../interfaces/common';
+import httpStatus from 'http-status';
+import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { IGenericResponse } from '../../../interfaces/common';
+import { IPaginationOptions } from '../../../interfaces/pagination';
+import prisma from '../../../shared/prisma';
 import { brandSearchFields } from './brand.constant';
+import { IBrandFilter } from './brand.interface';
 
 const create = async (payload: Brand): Promise<Brand> => {
+  // check if brand already exists
+  const brand = await prisma.brand.findUnique({
+    where: {
+      name: payload.name,
+    },
+  });
+  if (brand) {
+    throw new ApiError(httpStatus.CONFLICT, 'Brand already exists');
+  }
+
+  // create new brand
   const result = await prisma.brand.create({
     data: payload,
   });
+
   return result;
 };
 
@@ -29,6 +43,10 @@ const getAll = async (
     orderBy = {
       [sortBy]: sortOrder,
     };
+  } else {
+    orderBy = {
+      createdAt: 'desc',
+    };
   }
   const andConditions = [];
 
@@ -46,19 +64,21 @@ const getAll = async (
   }
 
   //filtering
-
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
       AND: Object.keys(filterData).map(key => ({
         [key]: {
           equals: (filterData as any)[key],
+          mode: 'insensitive',
         },
       })),
     });
   }
+
   const whereConditions =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
+  // get data according to pagination and filtering
   const result = await prisma.brand.findMany({
     where: whereConditions,
     orderBy,
@@ -68,9 +88,12 @@ const getAll = async (
       products: true,
     },
   });
+
+  // get total count of data
   const total = await prisma.brand.count({
     where: whereConditions,
   });
+
   return {
     meta: {
       page,
@@ -81,7 +104,7 @@ const getAll = async (
   };
 };
 
-const getSingle = async (id: string): Promise<Brand | null> => {
+const getSingle = async (id: string): Promise<Brand> => {
   const result = await prisma.brand.findUnique({
     where: {
       id,
@@ -90,15 +113,33 @@ const getSingle = async (id: string): Promise<Brand | null> => {
       products: true,
     },
   });
+
+  // check if brand exists
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Brand not found');
+  }
+
   return result;
 };
 
-const deleteOne = async (id: string): Promise<Brand | null> => {
+const deleteOne = async (id: string): Promise<Brand> => {
+  // delete all product with this brand
+  await prisma.product.deleteMany({
+    where: {
+      brandId: id,
+    },
+  });
+
+  // delete brand
   const result = await prisma.brand.delete({
     where: {
       id,
     },
+    include: {
+      products: true,
+    },
   });
+
   return result;
 };
 

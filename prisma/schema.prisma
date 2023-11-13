@@ -93,7 +93,7 @@ model Admin {
 // Category model
 model Category {
   id          String  @id @default(uuid())
-  title       String
+  title       String  @unique
   image       String
   description String?
 
@@ -108,7 +108,7 @@ model Category {
 // Brand model
 model Brand {
   id          String  @id @default(uuid())
-  name        String
+  name        String @unique
   image       String
   description String?
 

@@ -1,14 +1,16 @@
+import { Brand } from '@prisma/client';
 import httpStatus from 'http-status';
-import catchAsync from '../../../shared/catchAsync';
-import sendResponse from '../../../shared/sendResponse';
-import { BrandService } from './brand.service';
-import pick from '../../../shared/pick';
-import { brandFilterFields } from './brand.constant';
 import { paginationOptionFields } from '../../../common/paginationOptions';
+import catchAsync from '../../../shared/catchAsync';
+import pick from '../../../shared/pick';
+import sendResponse from '../../../shared/sendResponse';
+import { brandFilterFields } from './brand.constant';
+import { BrandService } from './brand.service';
 
 const create = catchAsync(async (req, res) => {
   const result = await BrandService.create(req.body);
-  sendResponse(res, {
+
+  sendResponse<Brand>(res, {
     statusCode: httpStatus.CREATED,
     success: true,
     message: 'Successfully created brand',
@@ -17,13 +19,17 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getAll = catchAsync(async (req, res) => {
+  // pick only filter fields from req.query
   const filters = pick(req.query, brandFilterFields);
+  // pick only pagination options from req.query
   const paginationOptions = pick(req.query, paginationOptionFields);
+
   const result = await BrandService.getAll(filters, paginationOptions);
-  sendResponse(res, {
-    statusCode: httpStatus.FOUND,
+
+  sendResponse<Brand[]>(res, {
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully Get all brand',
+    message: 'Fetched all brand',
     data: result.data,
     meta: result.meta,
   });
@@ -31,22 +37,22 @@ const getAll = catchAsync(async (req, res) => {
 
 const getSingle = catchAsync(async (req, res) => {
   const result = await BrandService.getSingle(req.params.id);
-  sendResponse(res, {
+
+  sendResponse<Brand>(res, {
     statusCode: httpStatus.FOUND,
     success: true,
-    message: `${
-      result ? 'Successfully Get single Brand info' : 'No data found'
-    } `,
+    message: 'Retrieve brand data',
     data: result,
   });
 });
 
 const deleteOne = catchAsync(async (req, res) => {
   const result = await BrandService.deleteOne(req.params.id);
-  sendResponse(res, {
+
+  sendResponse<Brand>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully Delete a Brand ',
+    message: 'Successfully Deleted the Brand ',
     data: result,
   });
 });

@@ -25,7 +25,7 @@ const createShopKeeper = z.object({
       shopName: z.string({ required_error: 'Shop Name is required' }),
       shopAddress: z.string({ required_error: 'Shop Address is required' }),
       contactNo: z.string({ required_error: 'Contact Number is required' }),
-      gender: z.string({ required_error: 'Gender is required' }),
+      gender: z.string().optional(),
     })
     .strict(),
 });
